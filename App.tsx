@@ -1,42 +1,44 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, Button, Alert, FlatList } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 
 const Stack = createStackNavigator();
-const headerOptions = {
-  headerRight: () => <TaskComponent/>
-};
 
-class TaskComponent extends React.Component{
-  _onPress = () => Alert.prompt("Hey");
-  render(){
-    return (
-      <Button onPress={this._onPress} title="Add" color="#000"/>
-    );
-  }
-}
-
-class HomeScreen extends React.Component {
+class HomeScreen extends React.Component<{}, {CurrentCount : number, TaskList: any[]}>{
 
   constructor(props : any){
     super(props);
+    const {navigation} = props;
+    navigation.setOptions({headerRight: this._btnAddTask})
     this.state = {
-      TaskList : [{key: 1, Title:"Task 1"}, {key: 2, Title: "Task 2"}]
+      CurrentCount : 0,
+      TaskList : []
     }
+  }
+
+  _btnAddTask = () => {
+    var _onPress = () => Alert.prompt("Add Something", "Enter Text", (text :string) => this._listcallback(text));
+    return (
+      <Button onPress={_onPress} title="Add" color="#000" />
+    );
+  } 
+
+  _listcallback = (text : string) => {
+    var newList = this.state.TaskList.concat([{key: '' + this.state.CurrentCount, Title: text}]);
+    var newState = {CurrentCount : this.state.CurrentCount + 1, TaskList: newList};
+    this.setState(newState);
   }
 
   render(){
     return (
-      <View>
         <View style={styles.container}>
-          <Text style={{alignItems: "center"}}>Welcome!</Text>
-          {/* <FlatList 
-            data={[{key: 1, Title:"Task 1"}, {key: 2, Title: "Task 2"}]}
-            renderItem={({item}) => <Text>{item.Title}</Text>}/> */}
+          <Text style={styles.titleText}>Welcome!</Text>
+          <FlatList 
+            data={this.state.TaskList}
+            renderItem={({item}) => <Text style={styles.titleText}>{item.Title}</Text>}/>
         </View>
-      </View>
     );
   }
 }
