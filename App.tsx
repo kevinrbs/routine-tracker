@@ -19,11 +19,12 @@ class HomeScreen extends React.Component<{}, {CurrentCount : number, TaskList: a
   }
 
   _btnAddTask = () => {
-    var _onPress = () => Alert.prompt("Add Something", "Enter Text", (text :string) => this._listcallback(text));
     return (
-      <Button onPress={_onPress} title="Add" color="#000" />
+      <Button onPress={this._onPress} title="Add" color="#000" />
     );
-  } 
+  }
+
+  _onPress = () => Alert.prompt("Add Something", "Enter Text", (text :string) => this._listcallback(text));
 
   _listcallback = (text : string) => {
     var newList = this.state.TaskList.concat([{key: '' + this.state.CurrentCount, Title: text}]);
