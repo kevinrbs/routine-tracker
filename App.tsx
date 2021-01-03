@@ -1,47 +1,71 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, Alert, FlatList } from 'react-native';
-import { NavigationContainer, NavigationProp } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack'
+import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack'
+import { NavigationContainer, NavigationProp, RouteProp } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
-class HomeScreen extends React.Component<{}, {CurrentCount : number, TaskList: any[]}>{
+interface IState{
+  CurrentCount : number,
+  TaskList: any[]
+}
 
-  constructor(props : any){
+interface IProps{
+  navigation : StackNavigationProp<any, any>
+}
+
+class HomeScreen extends Component<IProps, IState>{
+
+  navigation : StackNavigationProp<any, any>;
+
+  constructor(props : IProps){
     super(props);
-    const {navigation} = props;
-    navigation.setOptions({headerRight: this._btnAddTask})
+    console.log(props);
+    this.navigation = props.navigation;
     this.state = {
       CurrentCount : 0,
-      TaskList : []
+      TaskList : [],
     }
   }
 
-  _btnAddTask = () => {
-    return (
-      <Button onPress={this._onPress} title="Add" color="#000" />
-    );
+  componentDidMount(){
+    var options = {
+      headerRight: () => foo(this._mySetState)
+    }
+    this.navigation.setOptions(options);
   }
 
-  _onPress = () => Alert.prompt("Add Something", "Enter Text", (text :string) => this._listcallback(text));
+  _mySetState = (text : string) =>{
+    var newTask = {key : '' + this.state.CurrentCount, Text: text}
+    var newData = this.state.TaskList.concat([newTask]);
+    var newState = {
+      CurrentCount : this.state.CurrentCount + 1,
+      TaskList : newData
+    }
 
-  _listcallback = (text : string) => {
-    var newList = this.state.TaskList.concat([{key: '' + this.state.CurrentCount, Title: text}]);
-    var newState = {CurrentCount : this.state.CurrentCount + 1, TaskList: newList};
     this.setState(newState);
   }
 
   render(){
     return (
         <View style={styles.container}>
-          <Text style={styles.titleText}>Welcome!</Text>
-          <FlatList 
+          <Text style={styles.titleText}></Text>
+          <FlatList
             data={this.state.TaskList}
-            renderItem={({item}) => <Text style={styles.titleText}>{item.Title}</Text>}/>
+            renderItem={ListItem}
+          />
         </View>
     );
   }
+}
+
+function ListItem({item} : any){
+  return (<Text style={{color: '#fff'}}>{item.Text}</Text>);
+}
+
+function foo(callback : (text:string) => void){
+  return <Button title="Add" onPress={() => Alert.prompt("Hey", undefined, callback)}/>
 }
 
 export default function App() {
