@@ -7,6 +7,14 @@
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "pages": ["./src/pages/index.ts"],
+      "components": ["./src/components/index.ts"],
+      "layouts": ["./src/layouts/index.ts"],
+      "assets": ["./src/assets/index.ts"],
+      "utils": ["./src/utils/index.ts"],
+      "styles": ["./src/styles/index.ts"]
+    }
   }
 }
